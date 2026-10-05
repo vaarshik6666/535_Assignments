@@ -178,13 +178,16 @@ def CMPC_Controller(x_bar, u_bar, x0, param):
 
     # Define and solve the CVXPY problem.
     x = cp.Variable(n_var)
-    objective = cp.Minimize( 0.5 * cp.quad_form(x, P) + q.flatten() @ x)
+    objective = cp.Minimize(
+    0.5 * cp.quad_form(x, P) + q.flatten() @ x
+)
     constraints = [
         A @ x == b,
         x[:dim_state] == x0 - x_bar[0, :],
         G @ x <= ub,
         G @ x >= lb
     ]
+
     prob = cp.Problem(objective, constraints)
     prob.solve(verbose=False, max_iter=10000)
 

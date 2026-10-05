@@ -18,8 +18,8 @@ def ACC_Controller(t, x, param):
     #############################################################################
 
     # set the parameters
-    lam = 1.0
-    alpha = 1.0
+    lam = 0.1
+    alpha = 0.1
     w = 1000.0
 
     # construct the cost function
@@ -34,17 +34,17 @@ def ACC_Controller(t, x, param):
     A[0, 0] = (x[1] - vd) / m
     A[0, 1] = -1
     
-    A[1, 0] = (1.8 + (x[1] - v0) / Cdg) / m
-    
+    A[1, 0] = -(1.8 + (x[1] - v0) / Cdg) / m
+
     A[2, 0] = 1 / m
-    
+
     A[3, 0] = -1 / m
-    
+
     A[4, 1] = -1
-    
+
     b[0] = -lam * h
 
-    b[1] = (v0 - x[1]) + alpha * B
+    b[1] = (x[1] - v0) - alpha * B
     
     b[2] = Cag
     
@@ -55,9 +55,5 @@ def ACC_Controller(t, x, param):
     #############################################################################
     #                            END OF YOUR CODE                               #
     #############################################################################
-    
-    print("x =", x)
-    print("A =", A)
-    print("b =", b)
     
     return A, b, P, q
