@@ -18,8 +18,8 @@ def ACC_Controller(t, x, param):
     #############################################################################
 
     # set the parameters
-    lam = 0.5
-    alpha = 1.0
+    lam = 1.0
+    alpha = 0.5
     w = 1000.0
 
     # construct the cost function

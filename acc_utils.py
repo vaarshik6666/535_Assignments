@@ -53,13 +53,13 @@ def sim_vehicle(ACC_Controller, param, y0):
         if t[k] > param["switch_time"]:
             param["v0"] = param["v02"]
             
-        A, b, P, q = ACC_Controller(t[k], y[k, :], param)
-        var = cp.Variable(2)
-        prob = cp.Problem(cp.Minimize((1/2)*cp.quad_form(var, P)+ q.T @ var),
-                         [A @ var <= b])
-        prob.solve()
-        prob.solve()
-    print("QP status:", prob.status)
+    A, b, P, q = ACC_Controller(t[k], y[k, :], param)
+    var = cp.Variable(2)
+    prob = cp.Problem(
+        cp.Minimize((1/2)*cp.quad_form(var, P) + q.T @ var),
+        [A @ var <= b]
+    )
+    prob.solve()
 
     if var.value is None:
         u[k] = 0.0
