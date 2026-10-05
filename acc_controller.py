@@ -31,10 +31,10 @@ def ACC_Controller(t, x, param):
     h = (x[1] - vd)**2 / 2
     B = x[0] - (v0 - x[1])**2 / (2 * Cdg) - 1.8 * x[1]
     
-    A[0, 0] = (x[0] - vd) / m
+    A[0, 0] = (x[1] - vd) / m
     A[0, 1] = -1
     
-    A[1, 0] = (1.8 + (x[0] - v0) / Cdg) / m
+    A[1, 0] = (1.8 + (x[1] - v0) / Cdg) / m
     
     A[2, 0] = 1 / m
     
@@ -44,7 +44,7 @@ def ACC_Controller(t, x, param):
     
     b[0] = -lam * h
 
-    b[1] = (v0 - x[0]) + alpha * B
+    b[1] = (v0 - x[1]) + alpha * B
     
     b[2] = Cag
     

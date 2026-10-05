@@ -99,8 +99,11 @@ def LQR_Controller(x_bar, u_bar, x0, param):
     
     # Define and solve the CVXPY problem.
     x = cp.Variable(n_var)
-    objective = cp.Minimize(0.5 * sum( x[i] * P[i, j] * x[j] for i in range(n_var) for j in range(n_var)) + sum( q[i] * x[i] for i in range(n_var)))
-    constraints = [ sum(A[i, j] * x[j] for j in range(n_var)) == b[i] for i in range(n_eq)]
+    objective = cp.Minimize(0.5 * cp.quad_form(x, P) + q.flatten() @ x)
+    constraints = [
+    A @ x == b,
+    x[:dim_state] == x0 - x_bar[0, :]
+]
     prob = cp.Problem(objective, constraints)
     prob.solve(verbose=False, max_iter=10000)
 
@@ -147,17 +150,41 @@ def CMPC_Controller(x_bar, u_bar, x0, param):
     # define the constraints
     A = np.zeros((n_eq, n_var))
     b = np.zeros(n_eq)
+    for k in range(len_ctrl):
+        Ak, Bk = calc_Jacobian(x_bar[k, :], u_bar[k, :], param)
+
+        A[k*dim_state:(k+1)*dim_state,
+        k*dim_state:(k+1)*dim_state] = Ak
+
+        A[k*dim_state:(k+1)*dim_state,
+        (k+1)*dim_state:(k+2)*dim_state] = -np.eye(dim_state)
+
+        A[k*dim_state:(k+1)*dim_state,
+        n_x + k*dim_ctrl:n_x + (k+1)*dim_ctrl] = Bk
+    
     G = np.zeros((n_ieq, n_var))
     ub = np.zeros(n_ieq)
     lb = np.zeros(n_ieq)
 
+    for k in range(len_ctrl):
+        G[2*k, n_x + k*dim_ctrl] = 1
+        G[2*k+1, n_x + k*dim_ctrl + 1] = 1
+
+        lb[2*k] = -a_limit - u_bar[k, 0]
+        ub[2*k] =  a_limit - u_bar[k, 0]
+
+        lb[2*k+1] = -delta_limit - u_bar[k, 1]
+        ub[2*k+1] =  delta_limit - u_bar[k, 1]
+
     # Define and solve the CVXPY problem.
     x = cp.Variable(n_var)
-    objective = cp.Minimize( 0.5 * sum(x[i] * P[i, j] * x[j] for i in range(n_var) for j in range(n_var)) + sum(q[i] * x[i] for i in range(n_var)))
-    constraints = [sum(A[i, j] * x[j] for j in range(n_var)) == b[i] for i in range(n_eq)]
-    + [sum(G[i, j] * x[j] for j in range(n_var)) <= ub[i]for i in range(n_ieq)]
-    + [sum(G[i, j] * x[j] for j in range(n_var)) >= lb[i]
-    for i in range(n_ieq)]
+    objective = cp.Minimize( 0.5 * cp.quad_form(x, P) + q.flatten() @ x)
+    constraints = [
+        A @ x == b,
+        x[:dim_state] == x0 - x_bar[0, :],
+        G @ x <= ub,
+        G @ x >= lb
+    ]
     prob = cp.Problem(objective, constraints)
     prob.solve(verbose=False, max_iter=10000)
 
