@@ -38,7 +38,7 @@ def ACC_Controller(t, x, param):
 
     A[0, 0] = (v - vd) / m
     A[0, 1] = -1
-    A[1, 0] = (1.8 + (v - v0) / Cdg) / m
+    A[1, 0] = -(1.8 + (v - v0) / Cdg) / m
     A[2, 0] = 1 / m
     A[3, 0] = -1 / m
     A[4, 1] = -1
