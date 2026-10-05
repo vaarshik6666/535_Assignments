@@ -34,11 +34,11 @@ def ACC_Controller(t, x, param):
 
     dv = max(v - v0, 0.0)
 
-    B = D - dv**2 / (2*Cdg) - 1.8*v
+    B = D - (v - v0)**2 / (2*Cdg) - 1.8*v
 
     A[0, 0] = (v - vd) / m
     A[0, 1] = -1
-    A[1, 0] = (1.8 + dv / Cdg) / m
+    A[1, 0] = (1.8 + (v - v0) / Cdg) / m
     A[2, 0] = 1 / m
     A[3, 0] = -1 / m
     A[4, 1] = -1
