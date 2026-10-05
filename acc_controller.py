@@ -28,20 +28,23 @@ def ACC_Controller(t, x, param):
     
 # construct the constraints
 
-    h = (x[1] - vd)**2 / 2
-    B = x[0] - (v0 - x[1])**2 / (2 * Cdg) - 1.8 * x[1]
+    D, v = x[0], x[1]
 
-    A[0, 0] = (x[1] - vd) / m
+    h = (v - vd)**2 / 2
+
+    dv = max(v - v0, 0.0)
+
+    B = D - dv**2 / (2*Cdg) - 1.8*v
+
+    A[0, 0] = (v - vd) / m
     A[0, 1] = -1
-
-    A[1, 0] = (1.8 + (x[1] - v0) / Cdg) / m
-
+    A[1, 0] = (1.8 + dv / Cdg) / m
     A[2, 0] = 1 / m
     A[3, 0] = -1 / m
     A[4, 1] = -1
 
     b[0] = -lam * h
-    b[1] = (v0 - x[1]) + alpha * B
+    b[1] = (v0 - v) + alpha * B
     b[2] = Cag
     b[3] = Cdg
     b[4] = 0
