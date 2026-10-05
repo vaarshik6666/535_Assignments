@@ -46,25 +46,30 @@ def sim_vehicle(ACC_Controller, param, y0):
            raise RuntimeError("Could not integrate")
     
     ### recover control input ###
+    ### recover control input ###
     u = np.zeros((200, 1))
+
     for k in range(200):
         if t[k] <= param["switch_time"]:
             param["v0"] = param["v01"]
         if t[k] > param["switch_time"]:
             param["v0"] = param["v02"]
-            
-    A, b, P, q = ACC_Controller(t[k], y[k, :], param)
-    var = cp.Variable(2)
-    prob = cp.Problem(
-        cp.Minimize((1/2)*cp.quad_form(var, P) + q.T @ var),
-        [A @ var <= b]
-    )
-    prob.solve()
 
-    if var.value is None:
-        u[k] = 0.0
-    else:
-        u[k] = var.value[0]
+        A, b, P, q = ACC_Controller(t[k], y[k, :], param)
+
+        var = cp.Variable(2)
+        prob = cp.Problem(
+            cp.Minimize((1/2) * cp.quad_form(var, P) + q.T @ var),
+            [A @ var <= b]
+        )
+        prob.solve()
+
+        if var.value is None:
+            u[k] = 0.0
+        else:
+            u[k] = var.value[0]
+
+    ### recover control input ###
     ### recover control input ###
 
     v0 = t * 0
