@@ -136,9 +136,9 @@ def CMPC_Controller(x_bar, u_bar, x0, param):
     #############################################################################
     
     # define the parameters
-    Q = np.eye(4)  * 50
+    Q = np.eye(4)  * 100
     R = np.eye(2)  * 1
-    Pt = np.eye(4) * 100
+    Pt = np.eye(4) * 200
     
     # define the cost function
     P = np.zeros((n_var, n_var))
