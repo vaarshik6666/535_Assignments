@@ -70,9 +70,9 @@ def LQR_Controller(x_bar, u_bar, x0, param):
     #############################################################################
 
     # define the parameters
-    Q = np.eye(4)  * 10
-    R = np.eye(2)  * 5
-    Pt = np.eye(4) * 10
+    Q = np.eye(4)  * 50
+    R = np.eye(2)  * 1
+    Pt = np.eye(4) * 100
 
     # define the cost function
     P = np.zeros((124, 124))
