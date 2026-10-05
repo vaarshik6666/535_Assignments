@@ -170,11 +170,11 @@ def CMPC_Controller(x_bar, u_bar, x0, param):
         G[2*k, n_x + k*dim_ctrl] = 1
         G[2*k+1, n_x + k*dim_ctrl + 1] = 1
 
-        lb[2*k] = -a_limit - u_bar[k, 0]
-        ub[2*k] =  a_limit - u_bar[k, 0]
+        lb[2*k] = a_limit[0] - u_bar[k, 0]
+        ub[2*k] = a_limit[1] - u_bar[k, 0]
 
-        lb[2*k+1] = -delta_limit - u_bar[k, 1]
-        ub[2*k+1] =  delta_limit - u_bar[k, 1]
+        lb[2*k+1] = delta_limit[0] - u_bar[k, 1]
+        ub[2*k+1] = delta_limit[1] - u_bar[k, 1]
 
     # Define and solve the CVXPY problem.
     x = cp.Variable(n_var)
