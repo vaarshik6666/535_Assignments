@@ -19,8 +19,8 @@ def ACC_Controller(t, x, param):
 
     # set the parameters
     lam = 0.5
-    alpha = 0.5
-    w = 1000.0
+    alpha = 1.0
+    w = 1e7
 
     # construct the cost function
     P[0, 0] = 2
@@ -31,8 +31,10 @@ def ACC_Controller(t, x, param):
     D, v = x[0], x[1]
 
     h = (v - vd)**2 / 2
+    
+    dv = max(v - v0, 0.0)
 
-    B = D - (v - v0)**2 / (2*Cdg) - 1.8*v
+    B = D - dv**2 / (2*Cdg) - 1.8*v
 
     A[0, 0] = (v - vd) / m
     A[0, 1] = -1
