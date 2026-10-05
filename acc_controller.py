@@ -18,7 +18,7 @@ def ACC_Controller(t, x, param):
     #############################################################################
 
     # set the parameters
-    lam = 0.5
+    lam = 1.0
     alpha = 1.0
     w = 1000.0
 
@@ -32,11 +32,13 @@ def ACC_Controller(t, x, param):
 
     h = (v - vd)**2 / 2
 
-    B = D - (v0 - v)**2 / (2*Cdg) - 1.8*v
+    dv = max(v - v0, 0.0)
+
+    B = D - dv**2 / (2*Cdg) - 1.8*v
 
     A[0, 0] = (v - vd) / m
     A[0, 1] = -1
-    A[1, 0] = (1.8 + (v - v0) / Cdg) / m
+    A[1, 0] = (1.8 + dv / Cdg) / m
     A[2, 0] = 1 / m
     A[3, 0] = -1 / m
     A[4, 1] = -1
