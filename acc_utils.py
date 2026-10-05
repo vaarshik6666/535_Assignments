@@ -20,8 +20,12 @@ def CarModel(t, x, ACC_Controller, param):
     # The optimal objective value is returned by `prob.solve()`. You can set verbose=True for more output.
     prob.solve()
     print("QP status:", prob.status)
-    
-    u = var.value[0]        
+
+    if var.value is None:
+        u = 0.0
+    else:
+        u = var.value[0]
+
     u = np.clip(u, -param["Cdg"] * param["m"], param["Cag"] * param["m"])
     
     dx = np.array([param["v0"] - x[1], 
@@ -54,8 +58,12 @@ def sim_vehicle(ACC_Controller, param, y0):
         prob = cp.Problem(cp.Minimize((1/2)*cp.quad_form(var, P)+ q.T @ var),
                          [A @ var <= b])
         prob.solve()
-        print("QP status:", prob.status)
+        prob.solve()
+    print("QP status:", prob.status)
 
+    if var.value is None:
+        u[k] = 0.0
+    else:
         u[k] = var.value[0]
     ### recover control input ###
 
